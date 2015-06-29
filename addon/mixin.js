@@ -122,7 +122,7 @@ export default Ember.Mixin.create(setValidityMixin, {
     };
 
     if (this.get('validations.' + property).callback) {
-      this.get('validations.' + property) = { inline: this.get('validations.' + property) };
+      this.set('validations.' + property, { inline: this.get('validations.' + property) });
     }
 
     var createInlineClass = function(callback) {
