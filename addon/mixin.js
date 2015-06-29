@@ -87,7 +87,7 @@ export default Ember.Mixin.create(setValidityMixin, {
     this.dependentValidationKeys = {};
     this.validators = Ember.A();
     if (get(this, 'validations') === undefined) {
-      this.validations = {};
+      this.set('validations', {});
     }
     this.buildValidators();
     this.validators.forEach(function(validator) {
@@ -105,8 +105,8 @@ export default Ember.Mixin.create(setValidityMixin, {
   buildValidators: function() {
     var property;
 
-    for (property in this.validations) {
-      if (this.validations[property].constructor === Object) {
+    for (property in this.get('validations')) {
+      if (this.get('validations.' + property).constructor === Object) {
         this.buildRuleValidator(property);
       } else {
         this.buildObjectValidator(property);
@@ -116,12 +116,13 @@ export default Ember.Mixin.create(setValidityMixin, {
   buildRuleValidator: function(property) {
     var pushValidator = function(validator) {
       if (validator) {
-        this.validators.pushObject(validator.create({model: this, property: property, options: this.validations[property][validatorName]}));
+        var options = this.get('validations.' + property + '.' + validatorName);
+        this.validators.pushObject(validator.create({model: this, property: property, options: options}));
       }
     };
 
-    if (this.validations[property].callback) {
-      this.validations[property] = { inline: this.validations[property] };
+    if (this.get('validations.' + property).callback) {
+      this.get('validations.' + property) = { inline: this.get('validations.' + property) };
     }
 
     var createInlineClass = function(callback) {
@@ -137,10 +138,11 @@ export default Ember.Mixin.create(setValidityMixin, {
       });
     };
 
-    for (var validatorName in this.validations[property]) {
+    for (var validatorName in this.get('validations.' + property)) {
       if (validatorName === 'inline') {
-        pushValidator.call(this, createInlineClass(this.validations[property][validatorName].callback));
-      } else if (this.validations[property].hasOwnProperty(validatorName)) {
+        var validatorCallback = this.get('validations.' + property + '.' + validatorName + '.' + 'callback');
+        pushValidator.call(this, createInlineClass(validatorCallback));
+      } else if (this.get('validations.' + property).hasOwnProperty(validatorName)) {
         Ember.EnumerableUtils.forEach(lookupValidator.call(this, validatorName), pushValidator, this);
       }
     }
