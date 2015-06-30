@@ -19,7 +19,7 @@ var setValidityMixin = Ember.Mixin.create({
 
 var pushValidatableObject = function(model, property) {
   var content = get(model, property);
-  return if !content;
+  if(!content) { return; }
 
   model.removeObserver(property, pushValidatableObject);
   if (Ember.isArray(content)) {
