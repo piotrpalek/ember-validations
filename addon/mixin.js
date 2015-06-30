@@ -123,7 +123,7 @@ export default Ember.Mixin.create(setValidityMixin, {
       }
     };
 
-    if (get(this, 'validations.' + property + '.' + callback)) {
+    if (get(this, 'validations.' + property + '.callback')) {
       set(this, 'validations.' + property, { inline: get(this, 'validations.' + property) });
     }
 
