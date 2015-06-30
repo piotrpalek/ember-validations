@@ -106,7 +106,7 @@ export default Ember.Mixin.create(setValidityMixin, {
     var property;
 
     for (property in this.get('validations')) {
-      if (this.get('validations.' + property).constructor === Object) {
+      if (this.get('validations.' + property + '.constructor') === Object) {
         this.buildRuleValidator(property);
       } else {
         this.buildObjectValidator(property);
