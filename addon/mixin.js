@@ -90,10 +90,10 @@ export default Ember.Mixin.create(setValidityMixin, {
       this.set('validations', {});
     }
     this.buildValidators();
-    this.validators.forEach(function(validator) {
+    this.get('validators').forEach(function(validator) {
       validator.addObserver('errors.[]', this, function(sender) {
         var errors = Ember.A();
-        this.validators.forEach(function(validator) {
+        this.get('validators').forEach(function(validator) {
           if (validator.property === sender.property) {
             errors.addObjects(validator.errors);
           }
@@ -117,7 +117,7 @@ export default Ember.Mixin.create(setValidityMixin, {
     var pushValidator = function(validator) {
       if (validator) {
         var options = this.get('validations.' + property + '.' + validatorName);
-        this.validators.pushObject(validator.create({model: this, property: property, options: options}));
+        this.get('validators').pushObject(validator.create({model: this, property: property, options: options}));
       }
     };
 
@@ -165,7 +165,7 @@ export default Ember.Mixin.create(setValidityMixin, {
     });
   },
   _validate: Ember.on('init', function() {
-    var promises = this.validators.invoke('_validate').without(undefined);
+    var promises = this.get('validators').invoke('_validate').without(undefined);
     return Ember.RSVP.all(promises);
   })
 });
